@@ -4,6 +4,7 @@ import { FaDumbbell } from "react-icons/fa";
 import { FiBookOpen, FiCoffee } from "react-icons/fi";
 import { HiUser } from "react-icons/hi";
 import HabitTodayCard from "../../components/habits/HabitTodayCard";
+import HeatmapSelector from "../../components/heatmap/HeatmapSelector";
 
 export default function Dashboard() {
   const todayStats = {
@@ -45,6 +46,14 @@ export default function Dashboard() {
       completed: false,
     },
   ];
+    const sampleData = {
+    "2025-1-1": 5,
+    "2025-1-2": 1,
+    "2025-1-3": 9,
+    "2025-2-10": 3,
+    "2025-4-23": 7,
+    "2025-7-15": 12,
+  };
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] text-gray-100 pb-24 px-4 sm:px-6 lg:px-12">
@@ -132,6 +141,10 @@ export default function Dashboard() {
             />
           ))}
         </div>
+      </div>
+
+      <div>
+        <HeatmapSelector data={sampleData} year={"current"}/>
       </div>
     </div>
   );
