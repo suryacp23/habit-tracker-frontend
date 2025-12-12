@@ -9,127 +9,130 @@ import ConfirmModals from "../../components/common/ConfirmModals";
 import { getAllHabits, deleteHabit } from "../../api/habit";
 
 export default function Dashboard() {
-  const [habits, setHabits] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedHabit, setSelectedHabit] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+	const [habits, setHabits] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [selectedHabit, setSelectedHabit] = useState(null);
+	const [showModal, setShowModal] = useState(false);
 
-  // FETCH ALL HABITS
-  useEffect(() => {
-    const fetchHabits = async () => {
-      try {
-        const response = await getAllHabits();
-        setHabits(response.data.data || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+	// FETCH ALL HABITS
+	useEffect(() => {
+		const fetchHabits = async () => {
+			try {
+				const response = await getAllHabits();
+				setHabits(response.data.data || []);
+			} catch (err) {
+				console.error(err);
+			} finally {
+				setLoading(false);
+			}
+		};
 
-    fetchHabits();
-  }, []);
+		fetchHabits();
+	}, []);
 
-  // OPEN CONFIRM MODAL
-  const openConfirmModal = (habit) => {
-    setSelectedHabit(habit);
-    setShowModal(true);
-  };
+	// OPEN CONFIRM MODAL
+	const openConfirmModal = (habit) => {
+		setSelectedHabit(habit);
+		setShowModal(true);
+	};
 
-  // DELETE HABIT
-  const handleDelete = async () => {
-    if (!selectedHabit) return;
+	// DELETE HABIT
+	const handleDelete = async () => {
+		if (!selectedHabit) return;
 
-    try {
-      await deleteHabit(selectedHabit.id);
+		try {
+			await deleteHabit(selectedHabit.id);
 
-      // Remove habit from UI
-      setHabits((prev) =>
-        prev.filter(
-          (habit) =>
-            habit.id !== selectedHabit.id && habit._id !== selectedHabit.id
-        )
-      );
+			// Remove habit from UI
+			setHabits((prev) =>
+				prev.filter((habit) => habit.id !== selectedHabit.id && habit._id !== selectedHabit.id)
+			);
 
-      setSelectedHabit(null);
-      setShowModal(false);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+			setSelectedHabit(null);
+			setShowModal(false);
+		} catch (err) {
+			console.error(err);
+		}
+	};
 
-  // LOADING STATE
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        <Spinner />
-      </div>
-    );
+	// LOADING STATE
+	if (loading)
+		return (
+			<div className="min-h-screen flex items-center justify-center bg-black text-white">
+				<Spinner />
+			</div>
+		);
 
-  return (
-    <div className="min-h-screen bg-[#050505] text-gray-100 px-4 sm:px-6 lg:px-20 py-12 pb-28">
-      {/* TOP SECTION */}
-      <div className="mb-12">
-        <motion.h1
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-2xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-          Habit Tracker Dashboard
-        </motion.h1>
+	return (
+		<div className="min-h-screen bg-[#050505] text-gray-100 px-4 sm:px-6 lg:px-20 py-12 pb-28">
+			{/* TOP SECTION */}
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-gray-500 mt-2 text-md">
-          Stay consistent • Track your growth • Build your best self ✨
-        </motion.p>
-      </div>
+			<div className="mb-12">
+				<motion.h1
+					initial={{ opacity: 0, y: -20 }}
+					animate={{ opacity: 1, y: 0 }}
+					className="text-2xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"
+				>
+					Habit Tracker Dashboard
+				</motion.h1>
 
-      {/* HEATMAP */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="mb-12">
-        <HeatmapSelector />
-      </motion.div>
+				<motion.p
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ delay: 0.2 }}
+					className="text-gray-500 mt-2 text-md"
+				>
+					Stay consistent • Track your growth • Build your best self ✨
+				</motion.p>
+			</div>
 
-      {/* HABIT LIST */}
-      {habits.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center mt-20 text-gray-400">
-          <div className="text-7xl mb-4">📭</div>
-          <p className="text-2xl font-light">No habits added</p>
-          <p className="text-gray-500 text-sm mt-1">
-            Start building your daily routine today.
-          </p>
-        </motion.div>
-      ) : (
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}>
-          {habits.map((habit) => (
-            <HabitCard
-              key={habit.id || habit._id}
-              habit={habit}
-              onDelete={() => openConfirmModal(habit)}
-            />
-          ))}
-        </motion.div>
-      )}
+			{/* HEATMAP */}
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ delay: 0.3 }}
+				className="mb-12"
+			>
+				<HeatmapSelector />
+			</motion.div>
 
-      {/* CONFIRM DELETE MODAL */}
-      <ConfirmModals
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        onConfirm={handleDelete}
-        title="Confirm Deletion"
-        message={`Are you sure you want to delete "${selectedHabit?.name}"?`}
-      />
-    </div>
-  );
+			{/* HABIT LIST */}
+			{habits.length === 0 ? (
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					className="flex flex-col items-center justify-center mt-20 text-gray-400"
+				>
+					<div className="text-7xl mb-4">📭</div>
+					<p className="text-2xl font-light">No habits added</p>
+					<p className="text-gray-500 text-sm mt-1">
+						Start building your daily routine today.
+					</p>
+				</motion.div>
+			) : (
+				<motion.div
+					className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8"
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+				>
+					{habits.map((habit) => (
+						<HabitCard
+							key={habit.id || habit._id}
+							habit={habit}
+							onDelete={() => openConfirmModal(habit)}
+						/>
+					))}
+				</motion.div>
+			)}
+
+			{/* CONFIRM DELETE MODAL */}
+			<ConfirmModals
+				show={showModal}
+				onClose={() => setShowModal(false)}
+				onConfirm={handleDelete}
+				title="Confirm Deletion"
+				message={`Are you sure you want to delete "${selectedHabit?.name}"?`}
+			/>
+		</div>
+	);
 }
